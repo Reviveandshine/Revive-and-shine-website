@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Revive & Shine - Hover Bubble Emitter</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    height: 100vh;
+    font-family: 'Montserrat', Arial, sans-serif;
+    color: #0b3d91;
+    position: relative;
+    background-color: #4a90e2;
+  }
+
+  #bubble-canvas {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    display: block;
+  }
+
+  .packages {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    padding: 30px 20px 50px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .package {
+    background: #f0f9ff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(11, 61, 145, 0.15);
+    padding: 25px 25px 30px;
+    width: 280px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: pointer;
+    color: #033e8c;
+  }
+  .package:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(11, 61, 145, 0.3);
+  }
+  .package.selected {
+    border: 3px solid #0066ff;
+    transform: scale(1.1);
+    box-shadow: 0 12px 38px rgba(0, 102, 255, 0.5);
+  }
+  .package h3 {
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .package p,
+  .package ul {
+    text-align: left;
+    margin-top: 12px;
+    line-height: 1.4;
+    font-size: 0.95rem;
+  }
+
+  .desc-collapsed {
+    max-height: 120px;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+  }
+  .desc-expanded {
+    max-height: 700px;
+    transition: max-height 0.6s ease;
+  }
+
+  .select-btn {
+    margin-top: 18px;
+    padding: 12px 18px;
+    background: #0077ff;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s ease;
+  }
+  .select-btn:hover:not(:disabled) {
+    background: #005bb5;
+  }
+  .coming-soon {
+    background: #888 !important;
+    cursor: not-allowed;
+  }
+  .coming-soon:hover {
+    background: #888 !important;
+  }
+
+  form {
+    display: none;
+    max-width: 450px;
+    margin: 25px auto 40px auto;
+    background: #f7fbff;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 102, 255, 0.15);
+    color: #0246b5;
+    position: relative;
+    z-index: 10;
+  }
+  form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
+  form input, form select {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+    border: 1.8px solid #a5c8ff;
+    font-size: 1rem;
+    color: #03408a;
+  }
+  form input:focus, form select:focus {
+    outline: none;
+    border-color: #0077ff;
+    box-shadow: 0 0 8px #0077ffaa;
+  }
+  form label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  form label input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+  }
+  form label span.required {
+    color: #cc0000;
+    margin-left: 5px;
+  }
+  form button {
+    background: #0066ff;
+    color: white;
+    font-weight: 700;
+    padding: 14px;
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.3s ease;
+  }
+  form button:hover {
+    background: #004bb5;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bubble-canvas"></canvas>
+
+<div class="packages">
+  <div class="package" id="exterior-package">
+    <h3>Exterior Wash - £30</h3>
+    <div id="desc" class="desc-collapsed">
+      <p>
+        Give your car the royal treatment it deserves! Our <strong>Exterior Wash</strong> isn’t just about making your ride look shiny — it’s about turning heads wherever you go. Using only top-tier, pH-balanced shampoos and soft microfiber mitts, we scrub away grime, road salt, and those pesky bugs without a single scratch.<br><br>
+        <strong>What’s in it for you?</strong>
+      </p>
+      <ul>
+        <li>✨ A mirror-like shine that'll have neighbours asking for your secret.</li>
+        <li>🛡️ Paint protection from corrosive dirt and harsh elements.</li>
+        <li>🚗 Boost your car’s resale value effortlessly — clean cars sell faster.</li>
+        <li>💨 Feel like a rockstar every time you slide behind the wheel.</li>
+      </ul>
+      <p>
+        Picture rolling up to a meetup, and heads turning, jaws dropping: "Wow, did you just get a new car?" That’s the magic of <em>Revive & Shine</em>. Don’t just drive — arrive in style.
+      </p>
+    </div>
+    <button class="select-btn" onclick="togglePackage('Exterior Wash', this)">Select</button>
+  </div>
+
+  <div class="package">
+    <h3>Interior Detailing - Coming Soon</h3>
+    <button class="select-btn coming-soon" disabled>Coming Soon</button>
+  </div>
+  <div class="package">
+    <h3>Full Valet - Coming Soon</h3>
+    <button class="select-btn coming-soon" disabled>Coming Soon</button>
+  </div>
+  <div class="package">
+    <h3>Paint Correction & Polishing - Coming Soon</h3>
+    <button class="select-btn coming-soon" disabled>Coming Soon</button>
+  </div>
+  <div class="package">
+    <h3>Premium Detailing - Coming Soon</h3>
+    <button class="select-btn coming-soon" disabled>Coming Soon</button>
+  </div>
+</div>
+
+<form id="booking-form">
+  <h2>Book Your Package</h2>
+  <input type="text" id="package-name" readonly />
+  <input type="text" placeholder="Full Name" required />
+  <input type="email" placeholder="Email" required />
+  <input type="tel" placeholder="Phone Number" required />
+  <input type="text" placeholder="Address" required />
+  <label>
+    <input type="checkbox" id="water-permission" required />
+    Permission to use water tap
+    <span class="required">*</span>
+  </label>
+  <select required>
+    <option value="">Select Time Slot</option>
+    <option>9am - 10am</option>
+    <option>10am - 11am</option>
+    <option>11am - 12pm</option>
+    <option>3pm - 4pm</option>
+    <option>4pm - 5pm</option>
+    <option>5pm - 6pm</option>
+    <option>6pm - 7pm</option>
+    <option>7pm - 8pm</option>
+  </select>
+  <select required>
+    <option value="">Payment Method</option>
+    <option>Cash</option>
+    <option>Bank Transfer</option>
+  </select>
+  <button type="submit">Confirm Booking</button>
+</form>
+
+<script>
+  const canvas = document.getElementById('bubble-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * devicePixelRatio;
+    canvas.height = height * devicePixelRatio;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Background color smooth shifting
+  let bgColorPhase = 0;
+  let bgDirection = 1;
+  const color1 = {r: 74, g: 144, b: 226};  // #4a90e2 blue
+  const color2 = {r: 10, g: 34, b: 64};    // #0a2240 dark blue
+
+  function lerpColor(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  class Bubble {
+    constructor(x, y, radius, speed, alpha, isExplosion = false) {
+      this.x = x;
+      this.y = y;
+      this.radius = radius;
+      this.speed = speed;
+      this.alpha = alpha;
+      this.isExplosion = isExplosion;
+      this.life = 0;
+      this.maxLife = isExplosion ? 35 + Math.random() * 20 : Infinity;
+      this.vx = isExplosion ? (Math.random() - 0.5) * 2.5 : 0;
+      this.vy = isExplosion ? -Math.random() * 2 - 1 : -speed;
+      this.scale = 1;
+    }
+
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life++;
+      if (this.isExplosion) {
+        this.alpha -= 0.03;
+        this.scale += 0.05;
+      } else {
+        if (this.y < height * 0.2) {
+          this.alpha -= 0.005;
+        }
+      }
+    }
+
+    draw(ctx) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(this.alpha, 0);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * this.scale, 0, Math.PI * 2);
+      const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.2, this.x, this.y, this.radius * 1.1);
+      gradient.addColorStop(0, `rgba(255,255,255,${0.9 * this.alpha})`);
+      gradient.addColorStop(1, `rgba(255,255,255,0)`);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    isDead() {
+      return this.alpha <= 0 || this.life > this.maxLife;
+    }
+  }
+
+  const bubbles = [];
+  const maxBubbles = 200;  // Slightly higher for more bubbles
+
+  // Track hovered package center bottom coordinates
+  let hoveredPackageRect = null;
+
+  function getPackageBubbleOrigin() {
+    if (!hoveredPackageRect) {
+      // Default: bottom center of screen, but won't spawn bubbles then
+      return {x: width / 2, y: height + 20};
+    }
+    // Emit from random x along package bottom edge +/- some padding horizontally
+    const padding = 20;
+    const x = hoveredPackageRect.left + padding + Math.random() * (hoveredPackageRect.width - 2 * padding);
+    const y = hoveredPackageRect.bottom - 5;
+    return {x, y};
+  }
+
+  // Add bubbles continuously from hovered package
+  function addBubbleFromHovered() {
+    if (bubbles.length >= maxBubbles || !hoveredPackageRect) return;
+
+    const origin = getPackageBubbleOrigin();
+    const radius = 4 + Math.random() * 5;
+    const speed = 0.7 + Math.random() * 1.2;
+    const alpha = 0.3 + Math.random() * 0.5;
+
+    bubbles.push(new Bubble(origin.x, origin.y, radius, speed, alpha));
+  }
+
+  // Explode bubbles on click from hovered package or center screen fallback
+  function explodeBubbles() {
+    if (!hoveredPackageRect) return;
+    const origin = getPackageBubbleOrigin();
+    for(let i = 0; i < 20; i++) {
+      const radius = 6 + Math.random() * 5;
+      const alpha = 0.6 + Math.random() * 0.3;
+      bubbles.push(new Bubble(origin.x, origin.y, radius, 0, alpha, true));
+    }
+  }
+
+  // Animation loop
+  function animate() {
+    // Animate background color
+    bgColorPhase += 0.003 * bgDirection;
+    if (bgColorPhase > 1 || bgColorPhase < 0) bgDirection *= -1;
+    const r = Math.floor(lerpColor(color1.r, color2.r, bgColorPhase));
+    const g = Math.floor(lerpColor(color1.g, color2.g, bgColorPhase));
+    const b = Math.floor(lerpColor(color1.b, color2.b, bgColorPhase));
+    document.body.style.backgroundColor = `rgb(${r},${g},${b})`;
+
+    ctx.clearRect(0, 0, width, height);
+
+    // Add bubbles from hovered package
+    addBubbleFromHovered();
+
+    // Update and draw bubbles
+    for (let i = bubbles.length - 1; i >= 0; i--) {
+      let b = bubbles[i];
+      b.update();
+      if (b.isDead()) {
+        bubbles.splice(i, 1);
+      } else {
+        b.draw(ctx);
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Track hovered package
+  const packages = document.querySelectorAll('.package');
+  packages.forEach(pkg => {
+    pkg.addEventListener('mouseenter', e => {
+      hoveredPackageRect = pkg.getBoundingClientRect();
+    });
+    pkg.addEventListener('mousemove', e => {
+      hoveredPackageRect = pkg.getBoundingClientRect();
+    });
+    pkg.addEventListener('mouseleave', e => {
+      hoveredPackageRect = null;
+    });
+  });
+
+  // Bubble explosion on click anywhere on document
+  document.addEventListener('click', () => {
+    explodeBubbles();
+  });
+
+
+  // Selection logic (unchanged)
+  const desc = document.getElementById('desc');
+  const bookingForm = document.getElementById('booking-form');
+  const packageNameInput = document.getElementById('package-name');
+  let selectedPackage = null;
+
+  function togglePackage(name, btn) {
+    if (selectedPackage === name) {
+      // Deselect
+      selectedPackage = null;
+      desc.classList.remove('desc-expanded');
+      desc.classList.add('desc-collapsed');
+      bookingForm.style.display = 'none';
+      btn.textContent = 'Select';
+      btn.parentElement.classList.remove('selected');
+      packageNameInput.value = '';
+    } else {
+      // Select new
+      selectedPackage = name;
+      desc.classList.remove('desc-collapsed');
+      desc.classList.add('desc-expanded');
+      bookingForm.style.display = 'block';
+      packageNameInput.value = name;
+
+      // Reset all buttons and add selected class only to current
+      document.querySelectorAll('.package').forEach(pkg => {
+        pkg.classList.remove('selected');
+        const button = pkg.querySelector('button.select-btn');
+        if (button && !button.classList.contains('coming-soon')) {
+          button.textContent = 'Select';
+        }
+      });
+      btn.textContent = 'Deselect';
+      btn.parentElement.classList.add('selected');
+
+      // Scroll form into view smoothly
+      bookingForm.scrollIntoView({behavior: 'smooth'});
+    }
+  }
+
+  bookingForm.addEventListener('submit', e => {
+    e.preventDefault();
+    alert(`Thank you for booking the "${selectedPackage}" package! We will contact you shortly.`);
+    bookingForm.reset();
+    desc.classList.remove('desc-expanded');
+    desc.classList.add('desc-collapsed');
+    bookingForm.style.display = 'none';
+    document.querySelectorAll('.package').forEach(pkg => pkg.classList.remove('selected'));
+    selectedPackage = null;
+  });
+</script>
+
+</body>
+</html>
